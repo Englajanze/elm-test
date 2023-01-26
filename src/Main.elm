@@ -18,7 +18,7 @@ module Main exposing (main)
             - [X] knappen ska inte funka om dom är olika
                     - [X] se vart knappen är och hur den fungerar
                     - [X] if else 
-                            - [X] vart vi ska skriva if else
+                            - [X] vart jag ska skriva if else
                             - [X] condition password === confirmpassword
                             - [X] False = create account knappen ska inte funka
                             - [X] True = create account knappen ska funka
@@ -29,7 +29,14 @@ module Main exposing (main)
             - [ ] 
     - [ ] Form should not submit unless all fields are valid.
     - [ ] Form should not submit unless terms and condition checkbox is "checked"
-    - [ ] Add feedback that the app is loading when submit is clicked.
+
+    - [X] Add feedback that the app is loading when submit is clicked.
+            - [X] se hur de andra sidorna som visas i olika stadier är uppbyggda. 
+            - [X] skriva fler punkter efter research. 
+            - [X] skapa en view_Loading funktion
+            - [X]  skriva in meddelande som ska komma upp medans det laddar "Page is loading"
+            - [X] ändra view model Sending form till view_Loading
+            
     - [ ] Refactor code to make it more maintainable and easier to understand.
 
 -}
@@ -41,6 +48,7 @@ import Html.Events as Events
 import Process
 import Task
 import Regex
+import Html.Attributes exposing (required)
 
 
 main : Program Flags Model Msg
@@ -52,28 +60,18 @@ main =
         , view = view
         }
 
-
+-- De olika funktionaliteter som websidan har
 type Msg
     = FieldGotInput Field
     | FormSubmitClicked
     | GotBackendResponse
 
-
+-- state
 type alias Model =
     { form : Form
     , view : View
+    , showPassword : Bool
     }
-
-
-type View
-    = FillForm
-    | SendingForm
-    | SubmitSuccess
-
-
-type alias Flags =
-    ()
-
 
 type alias Form =
     { firstname : String
@@ -83,6 +81,15 @@ type alias Form =
     , confirmPassword : String
     }
 
+-- tre olika sidor vi kan vara inne på i View
+type View
+    = FillForm
+    | SendingForm
+    | SubmitSuccess
+
+
+type alias Flags =
+    ()
 
 type Field
     = Firstname String
@@ -91,7 +98,7 @@ type Field
     | Password String
     | ConfirmPassword String
 
-
+-- {} = record
 form_Empty : Form
 form_Empty =
     { firstname = ""
@@ -120,21 +127,21 @@ form_Update field form =
         ConfirmPassword str ->
             { form | confirmPassword = str }
 
-
-initModel : Model
-initModel =
-    { form = form_Empty
-    , view = FillForm
-    }
-
-
 init : Flags -> ( Model, Cmd Msg )
 init flags =
     ( initModel
     , Cmd.none
     )
 
+-- initial model, standard när man går in på sidan. Start sida
+initModel : Model
+initModel =
+    { form = form_Empty
+    , view = FillForm
+    , showPassword = False
+    }
 
+-- Subscriptions allow us to listen to external events 
 subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.none
@@ -150,7 +157,7 @@ update msg model =
 
         FormSubmitClicked ->
             ( { model | view = SendingForm }
-            , Process.sleep 1000
+            , Process.sleep 3000
                 |> Task.andThen (\_ -> Task.succeed GotBackendResponse)
                 |> Task.perform identity
             )
@@ -166,13 +173,13 @@ view model =
     Html.div
         []
         [ Html.node "style" [] [ Html.text css ]
-        , view_Hero
+        , view_Hero -- header (visas hela tiden)
         , case model.view of
             FillForm ->
                 view_Form model.form
 
             SendingForm ->
-                view_Form model.form
+                view_Loading model
 
             SubmitSuccess ->
                 view_Success model
@@ -191,10 +198,9 @@ view_Hero =
             , Html.p [] [ Html.text "Dolor eveniet mollitia omnis sequi obcaecati. Nobis sit nam iure sit earum. Dolorem natus dolore perspiciatis accusamus numquam maiores lorem!" ]
             ]
         ]
-
-
 view_Form : Form -> Html Msg
 view_Form form =
+
     Html.div
         []
         [ Html.div
@@ -265,7 +271,11 @@ view_Form form =
                     [ Html.input
                         [ HA.value form.password
                         , Events.onInput (FieldGotInput << Password)
-                        , HA.type_ "password"
+                        , 
+                        if True then
+                            HA.type_ "password"
+                        else
+                            HA.type_ "text"
                         ]
                         []
                     ]
@@ -273,6 +283,7 @@ view_Form form =
                     [ HA.value form.confirmPassword
                     , HA.type_ "checkbox"
                     , HA.class "checkboxPasswords"
+                    -- , Events.onClick ToggleShowPassword
                     ]
                     []
                 , Html.text "Show passwords"
@@ -329,7 +340,7 @@ view_Form form =
                     if (form.password == form.confirmPassword) then
                         Events.onClick FormSubmitClicked 
                     else 
-                        HA.class "hej"
+                        HA.class "hej" -- TODO: find a fix
                         
                     ]
                     [ Html.text "Create Account"
@@ -353,6 +364,14 @@ view_Form form =
                 , Html.li [] [ Html.text "Dolor omnis" ]
                 ]
             ]
+        ]
+
+view_Loading : Model -> Html msg
+view_Loading model =
+    Html.div
+        [ HA.class "page-loading"
+        ]
+        [ Html.text "Page is loading!"
         ]
 
 
