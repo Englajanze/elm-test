@@ -178,7 +178,7 @@ update msg model =
 
         FormSubmitClicked ->
             ( { model | view = SendingForm }
-            , Process.sleep 3000
+            , Process.sleep 1000
                 |> Task.andThen (\_ -> Task.succeed GotBackendResponse)
                 |> Task.perform identity
             )
@@ -215,12 +215,12 @@ view_Hero =
     Html.div
         [ HA.class "hero"
         ]
-            
-            [ Html.h1 [HA.class "create-account-hero"] [ Html.text "Create account!" ]
-            , Html.p [HA.class "hero-latin-text"] [ Html.text "Dolor eveniet mollitia omnis sequi obcaecati. Nobis sit nam iure sit earum. Dolorem natus dolore perspiciatis accusamus numquam maiores lorem!" ]
+        [ Html.div 
+            [HA.class "hero-latin-text-div"]
+            [Html.p [HA.class "hero-latin-text"] [ Html.text "Dolor eveniet mollitia omnis sequi obcaecati. Nobis sit nam iure sit earum. Dolorem natus dolore perspiciatis accusamus numquam maiores lorem!" ]] 
         , Html.div 
             [ HA.class "curve-div"] []
-            ]
+        ]
         
         
 
@@ -233,14 +233,70 @@ view_Landing =
         , Html.p [HA.class "features-text"] [ Html.text "Get access to our full set of features by registering, including but not limited to:" ]
         , Html.ul
             [HA.class "features-list"]
-            [ Html.li [HA.class "list-one"] [ Html.text "Lorem ipsum" ]
-            , Html.li [HA.class "list-two"] [ Html.text "Dolor eveniet" ]
-            , Html.li [HA.class "list-three"] [ Html.text "Mollitia omnis sequi obcaecati" ]
-            , Html.li [HA.class "list-four"] [ Html.text "Nobis" ]
-            , Html.li [HA.class "list-five"] [ Html.text "Nam iure sit earum" ]
-            , Html.li [HA.class "list-six"] [ Html.text "Perspiciatis accusamus numquam" ]
-            , Html.li [HA.class "list-seven"] [ Html.text "Obcaecati" ]
-            , Html.li [HA.class "list-eight"] [ Html.text "Dolor omnis" ]
+            [Html.div 
+                [HA.class "latin-list-element"] 
+                [ Html.img [HA.src "https://res.cloudinary.com/dvo8kf1x1/image/upload/v1675181976/book_icon_ytsgiw.png"
+                , HA.alt "Book icon"] []
+                , Html.li 
+                    [] 
+                    [Html.text "Lorem ipsum"]
+                ]
+            , Html.div 
+                [HA.class "latin-list-element"] 
+                [ Html.img [HA.src "https://res.cloudinary.com/dvo8kf1x1/image/upload/v1675186426/pen_icon_klms5f.png"
+                , HA.alt "Pen icon"] []
+                , Html.li 
+                    [] 
+                    [Html.text "Dolor eveniet"]
+                ]
+            , Html.div 
+                [HA.class "latin-list-element"] 
+                [ Html.img [HA.src "https://res.cloudinary.com/dvo8kf1x1/image/upload/v1675186426/weight_icon_uedlgf.png"
+                , HA.alt "Weight icon"] []
+                , Html.li 
+                    [] 
+                    [Html.text "Mollitia omnis sequi obcaecati"]
+                ]
+            , Html.div 
+                [HA.class "latin-list-element"] 
+                [ Html.img [HA.src "https://res.cloudinary.com/dvo8kf1x1/image/upload/v1675186426/mail_icon_snzgls.png"
+                , HA.alt "Mail icon"] []
+                , Html.li 
+                    [] 
+                    [Html.text "Nobis"]
+                ]
+            , Html.div 
+                [HA.class "latin-list-element"] 
+                [ Html.img [HA.src "https://res.cloudinary.com/dvo8kf1x1/image/upload/v1675186426/house_icon_sgymgv.png"
+                , HA.alt "House icon"] []
+                , Html.li 
+                    [] 
+                    [Html.text "Nam iure sit earum"]
+                ]
+            , Html.div 
+                [HA.class "latin-list-element"] 
+                [ Html.img [HA.src "https://res.cloudinary.com/dvo8kf1x1/image/upload/v1675186426/globe_icon_z4shkh.png"
+                , HA.alt "Globe icon"] []
+                , Html.li 
+                    [] 
+                    [Html.text "Perspiciatis accusamus numquam"]
+                ]
+            , Html.div 
+                [HA.class "latin-list-element"] 
+                [ Html.img [HA.src "https://res.cloudinary.com/dvo8kf1x1/image/upload/v1675186426/people_icon_nerfvf.png"
+                , HA.alt "People icon"] []
+                , Html.li 
+                    [] 
+                    [Html.text "Obcaecati"]
+                ]
+            , Html.div 
+                [HA.class "latin-list-element"] 
+                [ Html.img [HA.src "https://res.cloudinary.com/dvo8kf1x1/image/upload/v1675186426/wrench_icon_qymcfu.png"
+                , HA.alt "Wrench icon"] []
+                , Html.li 
+                    [] 
+                    [Html.text "Dolor omnis"]
+                ]
             ]
         , Html.button
             [ Events.onClick LandingPageClicked ]
@@ -252,10 +308,11 @@ view_Form form =
 
     Html.div
         [HA.class "form-center"]
-        [ Html.div
+        [Html.div
             [ HA.class "form"
             ]
-            [ Html.div
+            [Html.h1 [HA.class "create-account-text"] [ Html.text "Create account!" ]
+        ,  Html.div
                 []
                 [ Html.div
                     []
@@ -429,8 +486,12 @@ view_Success =
     [ Html.div 
         [HA.class "registration-thanks"]
         [ 
-         Html.text "Thank you for registering!"
-
+         Html.text "Thank you for registering!" 
+        , Html.img 
+        [HA.src "https://static.vecteezy.com/system/resources/previews/002/743/514/original/green-check-mark-icon-in-a-circle-free-vector.jpg" 
+        , HA.alt "Green checkmark"
+        ,HA.class "checkmark"]
+        []
         ]
     ]
   
@@ -541,94 +602,60 @@ css =
     width: 100%;
 }
 
-.create-account-hero {
-    position:absolute;
-    left: 30%;
-    top: 5%;
-    font-size: 8vw;
+.create-account-text {
+    text-align: center;
+    color: black;
+    margin-top: 0;
+}
+
+.hero-latin-text-div {
+    width: 65%;
+    height: 400px;
+    position: absolute;
+    right: 0;
 }
 
 .hero-latin-text {
-    width: 40%;
-    position:absolute;
-    bottom:10%;
-    right:0;
-    font-size: 2vw;
     font-style: oblique;
+    font-size: 42px;
+    padding: 0 0 0 32px;
 }
 
 /* List starting page  */
 .unique-selling-points {
     text-align: center;
+    font-family: palatino;
 }
 
 .features-title {
-    font-size: 60px;
+    font-size: 110px;
     margin-bottom: 0;
+    
 }
 
 .features-text {
-    font-size: 10px;
-    margin-top: 0;
+    font-size: 28px;
+    margin-top: 8px;
+    padding: 0 100px;
 }
 
-ul {
+.features-list {
+     display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
     list-style: none; 
     font-size: 40px;
+}
+
+.latin-list-element {
+    width: 40%;
 }
 
 ul li {
     margin: 25px;
 }
 
-ul li::before {
-    content: "•";
-    font-weight: bold; 
-    display: inline-block; 
-    width: 1em; 
-    margin-left: -1em; 
-    font-size: 1.8em; 
-}
-
-.list-one::before {
-    content: "•"; 
-    color: rgba(111, 143, 154, 0.20);
-}
-
-.list-two::before {
-    content: "•"; 
-    color: rgba(111, 143, 154, 0.30);
-}
-
-.list-three::before {
-    content: "•"; 
-    color: rgba(111, 143, 154, 0.40);
-}
-
-.list-four::before {
-    content: "•"; 
-    color: rgba(111, 143, 154, 0.50);
-}
-
-.list-five::before {
-    content: "•"; 
-    color: rgba(111, 143, 154, 0.60);
-}
-
-.list-six::before {
-    content: "•"; 
-    color: rgba(111, 143, 154, 0.70);
-}
-
-.list-seven::before {
-    content: "•"; 
-    color: rgba(111, 143, 154, 0.80);
-}
-
-.list-seven::before {
-    content: "•"; 
-    color: rgba(111, 143, 154, 0.90);
-}
 /* Form */
 
 .form-center {
@@ -697,6 +724,7 @@ button {
     border: 4px solid rgba(111, 143, 154, 1);
     border-radius: 20px;
     background-image: linear-gradient(to right, rgba(111, 143, 154, 0.20) 0%, rgba(111, 143, 154, 0.60) 51%, rgba(111, 143, 154, 1) 100%);
+    margin-bottom: 50px;
 }
 /* Loading page */
 
@@ -723,21 +751,21 @@ button {
 
 .thanks-page {
     width: 100%;
-    height: 100%;
     position: absolute;
     display: flex;
     justify-content: center;
 }
 .registration-thanks {
-   background-color: rgba(111, 143, 154, 1);
-   width: 70%;
-   height: 60%;
-   position: relative;
-   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-   top: -5%;
+    margin: 50px;
    font-size: 70px;
    font-weight: bold;
    text-align: center;
+
 }
+
+.checkmark {
+    width: 45%;
+}
+ 
 
 """
