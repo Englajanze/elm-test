@@ -680,13 +680,23 @@ ul li::before {
 
 .create-button {
     text-align: center;
+    margin-top: 15%;
 }
 button {
-    background-color: rgba(111, 143, 154, 1);
-    border: none;
-    padding: 80px;
     font-size: 60px;
-    margin-top: 15%;
+    font-weight: bold;
+    flex: 1 1 auto;
+    padding: 30px;
+    text-align: center;
+    text-transform: uppercase;
+    transition: 0.5s;
+    background-size: 200% auto;
+    color: white;
+    text-shadow: 0px 0px 10px rgba(0,0,0,0.2);
+    box-shadow: 0 0 20px #eee;
+    border: 4px solid rgba(111, 143, 154, 1);
+    border-radius: 20px;
+    background-image: linear-gradient(to right, rgba(111, 143, 154, 0.20) 0%, rgba(111, 143, 154, 0.60) 51%, rgba(111, 143, 154, 1) 100%);
 }
 /* Loading page */
 
