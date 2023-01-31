@@ -3,6 +3,19 @@ module Main exposing (main)
 {-| TODO
 
     - [ ] Implement a visually pleasing design without sacrificing usability
+    - [X] Göra en ny startsida med Lots of features texten
+            - [X] skriva en ny funktion view_Landing
+                    - [X] innehålla lots of fetures text
+                    - [X] skapa en Create account knapp
+            - [X] skriva en ny type View LandingPage
+            - [X] lägga till LandingPage i view model
+            - [X] byta initModel till LandingPage
+            - [ ] knappen ska leda till FillForm sidan
+                    - [X] lägga till LandingPageClicked type Msg
+                    - [X] lägga till LandingPageClicked i update case
+                            - [X] { model | view = FillForm }
+                    - [X] onClick LandingPageClicked på knappen
+
     - [ ] Make it responsive and useable on all screen sizes
     - [ ] Implement the hero in a resposive fashion
             - Feel free to adjust the HTML DOM as needed
@@ -48,7 +61,7 @@ import Html.Events as Events
 import Process
 import Task
 import Regex
-import Html.Attributes exposing (required)
+-- import Html.Attributes exposing (required)
 
 
 main : Program Flags Model Msg
@@ -63,6 +76,7 @@ main =
 -- De olika funktionaliteter som websidan har
 type Msg
     = FieldGotInput Field
+    | LandingPageClicked
     | FormSubmitClicked
     | GotBackendResponse
 
@@ -83,9 +97,11 @@ type alias Form =
 
 -- tre olika sidor vi kan vara inne på i View
 type View
-    = FillForm
+    = LandingPage
+    | FillForm
     | SendingForm
     | SubmitSuccess
+    
 
 
 type alias Flags =
@@ -137,7 +153,7 @@ init flags =
 initModel : Model
 initModel =
     { form = form_Empty
-    , view = FillForm
+    , view = LandingPage
     , showPassword = False
     }
 
@@ -150,6 +166,11 @@ subscriptions model =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        LandingPageClicked ->
+            ( { model | view = FillForm }
+            , Cmd.none
+            )
+
         FieldGotInput field ->
             ( { model | form = form_Update field model.form }
             , Cmd.none
@@ -175,14 +196,17 @@ view model =
         [ Html.node "style" [] [ Html.text css ]
         , view_Hero -- header (visas hela tiden)
         , case model.view of
+            LandingPage ->
+                view_Landing 
+            
             FillForm ->
                 view_Form model.form
 
             SendingForm ->
-                view_Loading model
+                view_Loading
 
             SubmitSuccess ->
-                view_Success model
+                view_Success
         ]
 
 
@@ -191,18 +215,43 @@ view_Hero =
     Html.div
         [ HA.class "hero"
         ]
-        [ Html.div
-            [ HA.class "hero-text"
+            
+            [ Html.h1 [HA.class "create-account-hero"] [ Html.text "Create account!" ]
+            , Html.p [HA.class "hero-latin-text"] [ Html.text "Dolor eveniet mollitia omnis sequi obcaecati. Nobis sit nam iure sit earum. Dolorem natus dolore perspiciatis accusamus numquam maiores lorem!" ]
+        , Html.div 
+            [ HA.class "curve-div"] []
             ]
-            [ Html.h1 [] [ Html.text "Create account!" ]
-            , Html.p [] [ Html.text "Dolor eveniet mollitia omnis sequi obcaecati. Nobis sit nam iure sit earum. Dolorem natus dolore perspiciatis accusamus numquam maiores lorem!" ]
+        
+        
+
+view_Landing : Html Msg
+view_Landing =
+    Html.div
+        [ HA.class "unique-selling-points"
+        ]
+        [ Html.h2 [HA.class "features-title"] [ Html.text "Lots of features" ]
+        , Html.p [HA.class "features-text"] [ Html.text "Get access to our full set of features by registering, including but not limited to:" ]
+        , Html.ul
+            [HA.class "features-list"]
+            [ Html.li [HA.class "list-one"] [ Html.text "Lorem ipsum" ]
+            , Html.li [HA.class "list-two"] [ Html.text "Dolor eveniet" ]
+            , Html.li [HA.class "list-three"] [ Html.text "Mollitia omnis sequi obcaecati" ]
+            , Html.li [HA.class "list-four"] [ Html.text "Nobis" ]
+            , Html.li [HA.class "list-five"] [ Html.text "Nam iure sit earum" ]
+            , Html.li [HA.class "list-six"] [ Html.text "Perspiciatis accusamus numquam" ]
+            , Html.li [HA.class "list-seven"] [ Html.text "Obcaecati" ]
+            , Html.li [HA.class "list-eight"] [ Html.text "Dolor omnis" ]
+            ]
+        , Html.button
+            [ Events.onClick LandingPageClicked ]
+            [ Html.text "Create Account"
             ]
         ]
 view_Form : Form -> Html Msg
 view_Form form =
 
     Html.div
-        []
+        [HA.class "form-center"]
         [ Html.div
             [ HA.class "form"
             ]
@@ -216,6 +265,7 @@ view_Form form =
                     []
                     [ Html.input
                         [ HA.value form.firstname
+                        , HA.class "input-feild"
                         , Events.onInput (FieldGotInput << Firstname)
                         ]
                         []
@@ -224,14 +274,16 @@ view_Form form =
             , Html.div
                 []
                 [ Html.div
-                    []
+                    [HA.class "label"]
                     [ Html.text "Lastname"
                     ]
                 , Html.div
                     []
                     [ Html.input
-                        [ HA.value form.lastname
+                        [ HA.value form.lastname , 
+                        HA.class "input-feild"
                         , Events.onInput (FieldGotInput << Lastname)
+                        
                         ]
                         []
                     ]
@@ -246,6 +298,7 @@ view_Form form =
                     []
                     [ Html.input
                         [ HA.value form.email
+                        , HA.class "input-feild"
                         , Events.onInput (FieldGotInput << Email)
                         ]
                         []
@@ -270,6 +323,7 @@ view_Form form =
                     []
                     [ Html.input
                         [ HA.value form.password
+                        , HA.class "input-feild"
                         , Events.onInput (FieldGotInput << Password)
                         , 
                         if True then
@@ -278,24 +332,32 @@ view_Form form =
                             HA.type_ "text"
                         ]
                         []
-                    ]
-                , Html.input
-                    [ HA.value form.confirmPassword
-                    , HA.type_ "checkbox"
-                    , HA.class "checkboxPasswords"
+                , Html.div 
+                    [HA.class "password-error-div"]
+                    [ 
+                    -- Showpassword checkbox och text
+                    -- if type=password -> type=text
+                        -- Html.input
+                     --   [ HA.value form.confirmPassword
+                      --  , HA.type_ "checkbox"
+                       -- , HA.class "checkboxPasswords"
                     -- , Events.onClick ToggleShowPassword
-                    ]
-                    []
-                , Html.text "Show passwords"
-                , case getPasswordError form.password of
-                    Just error ->
-                        Html.div
-                            []
-                            [ Html.text error
+                     --   ]
+                       -- []
+                   -- , Html.text "Show passwords"
+                     case getPasswordError form.password of
+                        Just error ->
+                            Html.div
+                                []
+                                [ Html.text error
                             ]
 
-                    Nothing ->
-                        Html.text ""
+                        Nothing ->
+                            Html.text ""
+
+                   ]
+                    ]
+               
                 ]
             , Html.div
                 []
@@ -307,6 +369,7 @@ view_Form form =
                     []
                     [ Html.input
                         [ HA.value form.confirmPassword
+                        , HA.class "input-feild"
                         , Events.onInput (FieldGotInput << ConfirmPassword)
                         , HA.type_ "password"
                         ]
@@ -328,13 +391,13 @@ view_Form form =
                 [ Html.input
                     [ HA.value form.confirmPassword
                     , HA.type_ "checkbox"
-                    , HA.class "checkbox"
+                    , HA.class "checkbox-terms"
                     ]
                     []
                 , Html.text "I agree to terms and conditions"
                 ]
             , Html.div
-                []
+                [HA.class "create-button"]
                 [ Html.button
                     [ 
                     if (form.password == form.confirmPassword) then
@@ -347,41 +410,30 @@ view_Form form =
                     ]
                 ]
             ]
-        , Html.div
-            [ HA.class "unique-selling-points"
-            ]
-            [ Html.h2 [] [ Html.text "Lots of features" ]
-            , Html.p [] [ Html.text "Get access to our full set of features by registering, including but not limited to:" ]
-            , Html.ul
-                []
-                [ Html.li [] [ Html.text "Lorem ipsum" ]
-                , Html.li [] [ Html.text "Dolor eveniet" ]
-                , Html.li [] [ Html.text "Mollitia omnis sequi obcaecati" ]
-                , Html.li [] [ Html.text "Nobis" ]
-                , Html.li [] [ Html.text "Nam iure sit earum" ]
-                , Html.li [] [ Html.text "Perspiciatis accusamus numquam" ]
-                , Html.li [] [ Html.text "Obcaecati" ]
-                , Html.li [] [ Html.text "Dolor omnis" ]
-                ]
-            ]
         ]
 
-view_Loading : Model -> Html msg
-view_Loading model =
-    Html.div
-        [ HA.class "page-loading"
-        ]
-        [ Html.text "Page is loading!"
-        ]
+view_Loading : Html msg
+view_Loading =
+    Html.div 
+    [HA.class "page-loading"]
+    [ Html.div 
+        [HA.class "loading-icon"]
+        []
+    ]
 
 
-view_Success : Model -> Html msg
-view_Success model =
-    Html.div
-        [ HA.class "registering-thanks"
+view_Success : Html msg
+view_Success =
+    Html.div 
+    [HA.class "thanks-page"]
+    [ Html.div 
+        [HA.class "registration-thanks"]
+        [ 
+         Html.text "Thank you for registering!"
+
         ]
-        [ Html.text "Thank you for registering!"
-        ]
+    ]
+  
 
 
 getEmailError : String -> Maybe String
@@ -442,42 +494,240 @@ getConfirmPasswordError password confirmPassword =
     -- båge inom bilden som är vit, görs med en div?
 -- hemsidan ska först visa lots of features, och knapp
 -- när knappen klickas ska form visas.
+
+-- [X] Body ska vara ut till kanterna
+-- header
+    -- create account stor text i hörnet
+    -- latin texten på sidan
+-- Startsidan
+    -- texten ska vara i center
+    -- roligare punkter (googla)
+-- FORM 
+    -- Class på alla textinputs
+    -- knapp i mitten
+    -- texten under vid ogiltigt lösenord ska vara svart 
+    -- texten under ogiltigt lösenord ska vara mindre
+    -- checkbox lösenord ska vara på sidan 
+-- Loading page
+    -- texten större 
+    -- texten i mitten av skärmen
+    -- bild på loading
+-- thank you page
+    -- texten större
+    -- texten i mitten av skärmen
+    -- icon ?
+    -- div med box shadow
 css : String
 css =
     """
+* {
+    padding:0;  
+}
+/* Header */
 .hero {
-    background-image: url("https://i.picsum.photos/id/665/1600/400.jpg?hmac=_bqybN6OSwmLs5ZvnuUz2GMWU5ZnLaQCAXc5CHsmGYs");
+    background-image: url("elm3.png");
     height: 400px;
     background-position: 12%;
+    width: 100%;
+    position: relative;
 }
 
-.hero-text {
- 
+.curve-div {
+    background-color: white;
+    height: 100px;
+    border-radius: 75%;
+    position: absolute;
+    bottom: -12%;
+    width: 100%;
+}
+
+.create-account-hero {
+    position:absolute;
+    left: 30%;
+    top: 5%;
+    font-size: 8vw;
+}
+
+.hero-latin-text {
+    width: 40%;
+    position:absolute;
+    bottom:10%;
+    right:0;
+    font-size: 2vw;
+    font-style: oblique;
+}
+
+/* List starting page  */
+.unique-selling-points {
+    text-align: center;
+}
+
+.features-title {
+    font-size: 60px;
+    margin-bottom: 0;
+}
+
+.features-text {
+    font-size: 10px;
+    margin-top: 0;
+}
+
+ul {
+    list-style: none; 
+    font-size: 40px;
+}
+
+ul li {
+    margin: 25px;
+}
+
+ul li::before {
+    content: "•";
+    font-weight: bold; 
+    display: inline-block; 
+    width: 1em; 
+    margin-left: -1em; 
+    font-size: 1.8em; 
+}
+
+.list-one::before {
+    content: "•"; 
+    color: rgba(111, 143, 154, 0.20);
+}
+
+.list-two::before {
+    content: "•"; 
+    color: rgba(111, 143, 154, 0.30);
+}
+
+.list-three::before {
+    content: "•"; 
+    color: rgba(111, 143, 154, 0.40);
+}
+
+.list-four::before {
+    content: "•"; 
+    color: rgba(111, 143, 154, 0.50);
+}
+
+.list-five::before {
+    content: "•"; 
+    color: rgba(111, 143, 154, 0.60);
+}
+
+.list-six::before {
+    content: "•"; 
+    color: rgba(111, 143, 154, 0.70);
+}
+
+.list-seven::before {
+    content: "•"; 
+    color: rgba(111, 143, 154, 0.80);
+}
+
+.list-seven::before {
+    content: "•"; 
+    color: rgba(111, 143, 154, 0.90);
+}
+/* Form */
+
+.form-center {
+    display: flex;
+    justify-content: center;
 }
 
 .form {
-margin-top: 40px;
-color: rgba(111, 143, 154, 1);
-}
-
-input {
-border: none;
-outline: none;
-border-bottom: 2px solid rgba(111, 143, 154, 1);
-margin-bottom: 15px;
-width: 80%;
-}
-
-.checkbox {
-
+    margin-top: 60px;
+    color: rgba(111, 143, 154, 1);
+    font-size: 40px;
+    width: 80%;
 }
 
 
+.input-feild {
+    border: none;
+    outline: none;
+    border-bottom: 2px solid rgba(111, 143, 154, 1);
+    margin-bottom: 40px;
+    width: 100%; 
+    font-size: 30px;
+}
+
+/* Show password button*/
+/* .checkbox-password-div {
+    position: absolute;
+    right: 0;
+    text-align: right;
+    font-size: 35px;
+    color: black;
+} */
+
+.password-error-div {
+    color: black;
+    font-size: 30px;
+
+}
+
+.checkbox-div {
+    text-align: center;
+}
+
+.checkbox-terms {
+    width: 30px;
+    height: 30px;
+    margin-right: 20px;
+}
+
+.create-button {
+    text-align: center;
+}
 button {
-background-color: rgba(111, 143, 154, 1);
-border: none;
-padding: 20px;
+    background-color: rgba(111, 143, 154, 1);
+    border: none;
+    padding: 80px;
+    font-size: 60px;
+    margin-top: 15%;
+}
+/* Loading page */
+
+.page-loading {
+    display: flex;
+    justify-content: center;
 }
 
+.loading-icon {
+    border: 16px solid #f3f3f3; 
+    border-top: 16px solid #3498db; 
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Thanks for registration */
+
+.thanks-page {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    display: flex;
+    justify-content: center;
+}
+.registration-thanks {
+   background-color: rgba(111, 143, 154, 1);
+   width: 70%;
+   height: 60%;
+   position: relative;
+   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+   top: -5%;
+   font-size: 70px;
+   font-weight: bold;
+   text-align: center;
+}
 
 """
