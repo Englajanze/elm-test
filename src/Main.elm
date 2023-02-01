@@ -2,7 +2,7 @@ module Main exposing (main)
 
 {-| TODO
 
-    - [ ] Implement a visually pleasing design without sacrificing usability
+    - [X] Implement a visually pleasing design without sacrificing usability
     - [X] Göra en ny startsida med Lots of features texten
             - [X] skriva en ny funktion view_Landing
                     - [X] innehålla lots of fetures text
@@ -10,14 +10,14 @@ module Main exposing (main)
             - [X] skriva en ny type View LandingPage
             - [X] lägga till LandingPage i view model
             - [X] byta initModel till LandingPage
-            - [ ] knappen ska leda till FillForm sidan
+            - [X] knappen ska leda till FillForm sidan
                     - [X] lägga till LandingPageClicked type Msg
                     - [X] lägga till LandingPageClicked i update case
                             - [X] { model | view = FillForm }
                     - [X] onClick LandingPageClicked på knappen
 
     - [ ] Make it responsive and useable on all screen sizes
-    - [ ] Implement the hero in a resposive fashion
+    - [X] Implement the hero in a resposive fashion
             - Feel free to adjust the HTML DOM as needed
             - The image should always take the full width of the screen (or a container)
             - The image should always be 400px in height
@@ -39,16 +39,15 @@ module Main exposing (main)
                     - [X] False = text visas "confirm password does not match password."
     - [ ] Make a show/hide button to display password in cleartext at will.
             - [ ] göra en knapp som visar både password och confirmpassword
-            - [ ] 
     - [ ] Form should not submit unless all fields are valid.
     - [ ] Form should not submit unless terms and condition checkbox is "checked"
 
     - [X] Add feedback that the app is loading when submit is clicked.
-            - [X] se hur de andra sidorna som visas i olika stadier är uppbyggda. 
-            - [X] skriva fler punkter efter research. 
-            - [X] skapa en view_Loading funktion
-            - [X]  skriva in meddelande som ska komma upp medans det laddar "Page is loading"
-            - [X] ändra view model Sending form till view_Loading
+            - [X] Se hur de andra sidorna som visas i olika stadier är uppbyggda. 
+            - [X] Skriva fler punkter efter research. 
+            - [X] Skapa en view_Loading funktion
+            - [X] Skriva in meddelande som ska komma upp medans det laddar "Page is loading"
+            - [X] Ändra view model Sending form till view_Loading
             
     - [ ] Refactor code to make it more maintainable and easier to understand.
 
@@ -61,7 +60,6 @@ import Html.Events as Events
 import Process
 import Task
 import Regex
--- import Html.Attributes exposing (required)
 
 
 main : Program Flags Model Msg
@@ -95,7 +93,7 @@ type alias Form =
     , confirmPassword : String
     }
 
--- tre olika sidor vi kan vara inne på i View
+-- Olika sidor vi kan vara inne på i View
 type View
     = LandingPage
     | FillForm
@@ -178,7 +176,7 @@ update msg model =
 
         FormSubmitClicked ->
             ( { model | view = SendingForm }
-            , Process.sleep 1000
+            , Process.sleep 2000
                 |> Task.andThen (\_ -> Task.succeed GotBackendResponse)
                 |> Task.perform identity
             )
@@ -213,13 +211,12 @@ view model =
 view_Hero : Html msg
 view_Hero =
     Html.div
-        [ HA.class "hero"
-        ]
+        [ HA.class "hero" ]
         [ Html.div 
             [HA.class "hero-latin-text-div"]
             [Html.p [HA.class "hero-latin-text"] [ Html.text "Dolor eveniet mollitia omnis sequi obcaecati. Nobis sit nam iure sit earum. Dolorem natus dolore perspiciatis accusamus numquam maiores lorem!" ]] 
         , Html.div 
-            [ HA.class "curve-div"] []
+            [ HA.class "curve-div" ] []
         ]
         
         
@@ -227,8 +224,7 @@ view_Hero =
 view_Landing : Html Msg
 view_Landing =
     Html.div
-        [ HA.class "unique-selling-points"
-        ]
+        [ HA.class "unique-selling-points" ]
         [ Html.h2 [HA.class "features-title"] [ Html.text "Lots of features" ]
         , Html.p [HA.class "features-text"] [ Html.text "Get access to our full set of features by registering, including but not limited to:" ]
         , Html.ul
@@ -300,8 +296,7 @@ view_Landing =
             ]
         , Html.button
             [ Events.onClick LandingPageClicked ]
-            [ Html.text "Create Account"
-            ]
+            [ Html.text "Create Account" ]
         ]
 view_Form : Form -> Html Msg
 view_Form form =
@@ -309,15 +304,13 @@ view_Form form =
     Html.div
         [HA.class "form-center"]
         [Html.div
-            [ HA.class "form"
-            ]
+            [ HA.class "form" ]
             [Html.h1 [HA.class "create-account-text"] [ Html.text "Create account!" ]
         ,  Html.div
                 []
                 [ Html.div
                     []
-                    [ Html.text "Firstname"
-                    ]
+                    [ Html.text "Firstname" ]
                 , Html.div
                     []
                     [ Html.input
@@ -332,15 +325,13 @@ view_Form form =
                 []
                 [ Html.div
                     [HA.class "label"]
-                    [ Html.text "Lastname"
-                    ]
+                    [ Html.text "Lastname" ]
                 , Html.div
                     []
                     [ Html.input
                         [ HA.value form.lastname , 
                         HA.class "input-feild"
-                        , Events.onInput (FieldGotInput << Lastname)
-                        
+                        , Events.onInput (FieldGotInput << Lastname) 
                         ]
                         []
                     ]
@@ -349,8 +340,7 @@ view_Form form =
                 []
                 [ Html.div
                     []
-                    [ Html.text "Email"
-                    ]
+                    [ Html.text "Email" ]
                 , Html.div
                     []
                     [ Html.input
@@ -362,7 +352,7 @@ view_Form form =
                     , case getEmailError form.email of
                         Just error ->
                             Html.div
-                                []
+                                [ HA.class "error-text" ]
                                 [ Html.text error
                                 ]
 
@@ -374,54 +364,48 @@ view_Form form =
                 []
                 [ Html.div
                     []
-                    [ Html.text "Password"
-                    ]
+                    [ Html.text "Password" ]
                 , Html.div
                     []
                     [ Html.input
                         [ HA.value form.password
                         , HA.class "input-feild"
                         , Events.onInput (FieldGotInput << Password)
-                        , 
-                        if True then
+                        -- Not implimented: Show and hide password
+                        {- , if True then
                             HA.type_ "password"
                         else
-                            HA.type_ "text"
+                            HA.type_ "text" -}
                         ]
                         []
-                , Html.div 
-                    [HA.class "password-error-div"]
-                    [ 
-                    -- Showpassword checkbox och text
-                    -- if type=password -> type=text
-                        -- Html.input
-                     --   [ HA.value form.confirmPassword
-                      --  , HA.type_ "checkbox"
-                       -- , HA.class "checkboxPasswords"
-                    -- , Events.onClick ToggleShowPassword
-                     --   ]
-                       -- []
-                   -- , Html.text "Show passwords"
-                     case getPasswordError form.password of
-                        Just error ->
-                            Html.div
+                        -- Showpassword checkbox och text
+
+                        {- if type=password -> type=text
+                            Html.input
+                                [ HA.value form.confirmPassword
+                                , HA.type_ "checkbox"
+                                , HA.class "checkboxPasswords"
+                                , Events.onClick ToggleShowPassword
+                                ]
                                 []
-                                [ Html.text error
-                            ]
+                            , Html.text "Show passwords" -}
 
-                        Nothing ->
-                            Html.text ""
+                       , case getPasswordError form.password of
+                            Just error ->
+                                Html.div
+                                    [HA.class "error-text"]
+                                    [ Html.text error
+                                ]
 
-                   ]
+                            Nothing ->
+                                Html.text ""
                     ]
-               
                 ]
             , Html.div
                 []
                 [ Html.div
                     []
-                    [ Html.text "Confirm Password"
-                    ]
+                    [ Html.text "Confirm Password" ]
                 , Html.div
                     []
                     [ Html.input
@@ -435,16 +419,14 @@ view_Form form =
                 , case getConfirmPasswordError form.password form.confirmPassword of
                     Just error ->
                         Html.div
-                            []
-                            [ Html.text error
-                            ]
+                            [ HA.class "error-text" ]
+                            [ Html.text error ]
 
                     Nothing ->
                         Html.text ""
                 ]
             , Html.div
-                [ HA.class "checkbox-div"
-                ]
+                [ HA.class "checkbox-div" ]
                 [ Html.input
                     [ HA.value form.confirmPassword
                     , HA.type_ "checkbox"
@@ -454,17 +436,15 @@ view_Form form =
                 , Html.text "I agree to terms and conditions"
                 ]
             , Html.div
-                [HA.class "create-button"]
+                [ HA.class "create-button" ]
                 [ Html.button
                     [ 
                     if (form.password == form.confirmPassword) then
                         Events.onClick FormSubmitClicked 
                     else 
-                        HA.class "hej" -- TODO: find a fix
-                        
+                        HA.class "" -- TODO: find a fix
                     ]
-                    [ Html.text "Create Account"
-                    ]
+                    [ Html.text "Create Account" ]
                 ]
             ]
         ]
@@ -485,16 +465,14 @@ view_Success =
     [HA.class "thanks-page"]
     [ Html.div 
         [HA.class "registration-thanks"]
-        [ 
-         Html.text "Thank you for registering!" 
+        [ Html.text "Thank you for registering!" 
         , Html.img 
-        [HA.src "https://static.vecteezy.com/system/resources/previews/002/743/514/original/green-check-mark-icon-in-a-circle-free-vector.jpg" 
-        , HA.alt "Green checkmark"
-        ,HA.class "checkmark"]
-        []
+            [HA.src "https://static.vecteezy.com/system/resources/previews/002/743/514/original/green-check-mark-icon-in-a-circle-free-vector.jpg" 
+            , HA.alt "Green checkmark"
+            , HA.class "checkmark"]
+            []
         ]
     ]
-  
 
 
 getEmailError : String -> Maybe String
@@ -521,7 +499,7 @@ getPasswordError password =
         Nothing
 
     else if String.length password < 6 then
-        Just "Password must be at least 6 chars"
+        Just "Password must be at least 6 characters"
         
     else if not (Regex.contains (checkRegex "[A-Z ]+") password) then
         Just "Password must contain at least one capital letter"
@@ -530,7 +508,7 @@ getPasswordError password =
         Just "Password must contain at least one number"
         
     else if not (Regex.contains (checkRegex "[\\W|_]") password) then
-        Just "Password must contain at least one special caracter"
+        Just "Password must contain at least one special character"
 
     else
         Nothing
@@ -584,9 +562,11 @@ css =
 * {
     padding:0;  
 }
+
 /* Header */
+
 .hero {
-    background-image: url("elm3.png");
+    background-image: url("https://res.cloudinary.com/dvo8kf1x1/image/upload/v1675239318/elm3_wyuksh.png");
     height: 400px;
     background-position: 12%;
     width: 100%;
@@ -613,6 +593,7 @@ css =
     height: 400px;
     position: absolute;
     right: 0;
+    overflow: hidden;
 }
 
 .hero-latin-text {
@@ -621,7 +602,9 @@ css =
     padding: 0 0 0 32px;
 }
 
-/* List starting page  */
+
+/* List landing page  */
+
 .unique-selling-points {
     text-align: center;
     font-family: palatino;
@@ -640,7 +623,7 @@ css =
 }
 
 .features-list {
-     display: flex;
+    display: flex;
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: center;
@@ -653,7 +636,7 @@ css =
 }
 
 ul li {
-    margin: 25px;
+    margin: 20px;
 }
 
 /* Form */
@@ -666,7 +649,7 @@ ul li {
 .form {
     margin-top: 60px;
     color: rgba(111, 143, 154, 1);
-    font-size: 40px;
+    font-size: 45px;
     width: 80%;
 }
 
@@ -677,10 +660,11 @@ ul li {
     border-bottom: 2px solid rgba(111, 143, 154, 1);
     margin-bottom: 40px;
     width: 100%; 
-    font-size: 30px;
+    font-size: 40px;
 }
 
-/* Show password button*/
+/* NOT FINISHED: Show password button*/
+
 /* .checkbox-password-div {
     position: absolute;
     right: 0;
@@ -689,10 +673,10 @@ ul li {
     color: black;
 } */
 
-.password-error-div {
+.error-text {
     color: black;
     font-size: 30px;
-
+    margin-bottom: 16px;
 }
 
 .checkbox-div {
@@ -726,6 +710,7 @@ button {
     background-image: linear-gradient(to right, rgba(111, 143, 154, 0.20) 0%, rgba(111, 143, 154, 0.60) 51%, rgba(111, 143, 154, 1) 100%);
     margin-bottom: 50px;
 }
+
 /* Loading page */
 
 .page-loading {
@@ -757,9 +742,9 @@ button {
 }
 .registration-thanks {
     margin: 50px;
-   font-size: 70px;
-   font-weight: bold;
-   text-align: center;
+    font-size: 70px;
+    font-weight: bold;
+    text-align: center;
 
 }
 
